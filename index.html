@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Balaghiy - Belajar Ilmu Balaghah Interaktif</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Amiri (Arabic) & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .font-arabic {
+            font-family: 'Amiri', serif;
+            line-height: 2.2;
+        }
+        .glass-card {
+            backdrop-filter: blur(12px);
+        }
+        .light .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+        }
+        .card-hover {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px -8px rgba(5, 150, 105, 0.25);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #059669;
+            border-radius: 10px;
+        }
+        /* Soundwave Animation */
+        .sound-wave-bar {
+            animation: soundWave 0.7s ease-in-out infinite alternate;
+        }
+        @keyframes soundWave {
+            0% { height: 4px; }
+            100% { height: 18px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col" onclick="initAudioEngineOnUserAction()">
+
+    <!-- Header Navigation -->
+    <header class="bg-emerald-800 dark:bg-slate-900 text-white shadow-xl sticky top-0 z-40 border-b border-emerald-700/50 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('overview')">
+                <div class="w-11 h-11 bg-gradient-to-br from-amber-400 to-amber-600 text-emerald-950 rounded-2xl flex items-center justify-center font-arabic text-2xl font-bold shadow-md">
+                    بلاغة
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg leading-tight tracking-wide">Al-Balaghiy (البلاغي)</h1>
+                    <p class="text-xs text-emerald-200 dark:text-emerald-400 font-medium">Ensiklopedia & Modul Interaktif Ilmu Balaghah</p>
+                </div>
+            </div>
+
+            <!-- Header Controls & Stats -->
+            <div class="flex items-center gap-3">
+                
+                <!-- Audio Visualizer Badge -->
+                <div id="audio-visualizer" class="hidden flex items-center gap-1 bg-emerald-900/80 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-emerald-500/40">
+                    <span class="sound-wave-bar w-1 bg-amber-400 rounded-full" style="animation-delay: 0.1s"></span>
+                    <span class="sound-wave-bar w-1 bg-amber-400 rounded-full" style="animation-delay: 0.3s"></span>
+                    <span class="sound-wave-bar w-1 bg-amber-400 rounded-full" style="animation-delay: 0.2s"></span>
+                    <span class="text-[11px] text-amber-300 font-semibold ml-1">Melafalkan...</span>
+                </div>
+
+                <!-- Theme Toggle -->
+                <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-emerald-700 dark:bg-slate-800 hover:bg-emerald-600 text-amber-300 flex items-center justify-center transition border border-emerald-600/50 dark:border-slate-700" title="Ganti Mode Terang/Gelap">
+                    <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+
+                <!-- Score Badge -->
+                <div class="flex items-center gap-3 bg-emerald-900/60 dark:bg-slate-800/80 px-3.5 py-1.5 rounded-xl text-xs border border-emerald-600/50 dark:border-slate-700 shadow-inner">
+                    <div class="flex items-center gap-1.5" title="Skor Belajar & Kuis">
+                        <i class="fa-solid fa-trophy text-amber-400 text-sm"></i>
+                        <span id="user-score" class="font-bold text-sm text-white">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="bg-emerald-900/80 dark:bg-slate-900/90 border-t border-emerald-700/40 dark:border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 flex gap-1 overflow-x-auto py-1">
+                <button onclick="switchView('overview')" id="tab-overview" class="nav-tab px-4 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-amber-300 bg-emerald-800 dark:bg-slate-800 whitespace-nowrap transition">
+                    <i class="fa-solid fa-sitemap"></i> Peta Cabang Ilmu
+                </button>
+                <button onclick="switchView('bayan')" id="tab-bayan" class="nav-tab px-4 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-emerald-100 hover:text-white hover:bg-emerald-800/50 dark:hover:bg-slate-800 whitespace-nowrap transition">
+                    <i class="fa-solid fa-eye"></i> 1. Ilmu Al-Bayan (البيان)
+                </button>
+                <button onclick="switchView('maani')" id="tab-maani" class="nav-tab px-4 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-emerald-100 hover:text-white hover:bg-emerald-800/50 dark:hover:bg-slate-800 whitespace-nowrap transition">
+                    <i class="fa-solid fa-brain"></i> 2. Ilmu Al-Ma'ani (المعاني)
+                </button>
+                <button onclick="switchView('badi')" id="tab-badi" class="nav-tab px-4 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-emerald-100 hover:text-white hover:bg-emerald-800/50 dark:hover:bg-slate-800 whitespace-nowrap transition">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 3. Ilmu Al-Badi' (البديع)
+                </button>
+                <button onclick="switchView('explorer')" id="tab-explorer" class="nav-tab px-4 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-emerald-100 hover:text-white hover:bg-emerald-800/50 dark:hover:bg-slate-800 whitespace-nowrap transition">
+                    <i class="fa-solid fa-magnifying-glass"></i> Pencari Ayat & Syi'ir
+                </button>
+                <button onclick="switchView('quiz')" id="tab-quiz" class="nav-tab px-4 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-emerald-100 hover:text-white hover:bg-emerald-800/50 dark:hover:bg-slate-800 whitespace-nowrap transition">
+                    <i class="fa-solid fa-graduation-cap"></i> Kuis Balaghah
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+
+        <!-- VIEW 1: OVERVIEW & MINDMAP -->
+        <section id="view-overview" class="space-y-6">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-emerald-700 via-teal-800 to-slate-900 text-white rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+                <div class="absolute right-0 top-0 opacity-10 transform translate-x-8 -translate-y-8 pointer-events-none font-arabic text-9xl font-bold">
+                    البلاغة
+                </div>
+                <div class="max-w-2xl relative z-10">
+                    <span class="px-3 py-1 bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-bold rounded-full mb-3 inline-block">
+                        Pendalaman Sastra & Keindahan Bahasa Arab
+                    </span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-3 leading-tight">Mengenal 3 Pilar Utama Ilmu Balaghah</h2>
+                    <p class="text-xs md:text-sm text-emerald-100 leading-relaxed">
+                        Ilmu Balaghah adalah disiplin ilmu sastra Arab untuk menyampaikan pesan secara indah, tepat sasaran, dan sesuai dengan situasi kondisi (*Muqthadhal Hal*). Pelajari 3 cabang utamanya berikut:
+                    </p>
+                </div>
+            </div>
+
+            <!-- 3 Core Branches Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Al-Bayan Card -->
+                <div onclick="switchView('bayan')" class="glass-card card-hover p-6 rounded-3xl cursor-pointer relative flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center font-arabic text-3xl font-bold border border-emerald-500/20">
+                            بيان
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center justify-between">
+                                Ilmu Al-Bayan
+                                <i class="fa-solid fa-arrow-right text-xs text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2">علم البيان</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Mempelajari cara menyampaikan satu makna tunggal dengan berbagai variasi pengungkapan visual (Kiasan, Penyerupaan, & Implikasi).
+                            </p>
+                        </div>
+                        <!-- Topics List -->
+                        <div class="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Tasybih (Penyerupaan 5 Tipe)</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Majaz (Lughawi, Aqli, Isti'arah)</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Kinayah (Ungkapan Tersirat)</div>
+                        </div>
+                    </div>
+                    <button class="mt-6 w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl transition shadow-md">
+                        Mulai Pelajari Al-Bayan
+                    </button>
+                </div>
+
+                <!-- Al-Ma'ani Card -->
+                <div onclick="switchView('maani')" class="glass-card card-hover p-6 rounded-3xl cursor-pointer relative flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 bg-teal-500/10 text-teal-600 dark:text-teal-400 rounded-2xl flex items-center justify-center font-arabic text-3xl font-bold border border-teal-500/20">
+                            معاني
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center justify-between">
+                                Ilmu Al-Ma'ani
+                                <i class="fa-solid fa-arrow-right text-xs text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-teal-600 dark:text-teal-400 font-semibold mb-2">علم المعاني</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Mempelajari kesesuaian kalimat dengan kondisi pendengar (*Muqthadhal Hal*) serta struktur kalimat informatif & korelatif.
+                            </p>
+                        </div>
+                        <!-- Topics List -->
+                        <div class="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> Khabari & Insya'i</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> Al-Qashr (Pembatasan Makna)</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> Ijaz, Ithnab, & Musawah</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500 text-[10px]"></i> Fashl & Washl</div>
+                        </div>
+                    </div>
+                    <button class="mt-6 w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs rounded-xl transition shadow-md">
+                        Mulai Pelajari Al-Ma'ani
+                    </button>
+                </div>
+
+                <!-- Al-Badi' Card -->
+                <div onclick="switchView('badi')" class="glass-card card-hover p-6 rounded-3xl cursor-pointer relative flex flex-col justify-between group">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center font-arabic text-3xl font-bold border border-amber-500/20">
+                            بديع
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center justify-between">
+                                Ilmu Al-Badi'
+                                <i class="fa-solid fa-arrow-right text-xs text-amber-600 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-amber-600 dark:text-amber-400 font-semibold mb-2">علم البديع</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Mempelajari seni memperindah kalimat, baik dari segi estetika makna (*Ma'nawiyyah*) maupun keindahan bunyi fonetik (*Lafzhiyyah*).
+                            </p>
+                        </div>
+                        <!-- Topics List -->
+                        <div class="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-500 text-[10px]"></i> Thibaq & Muqabalah (Oposisi Makna)</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-500 text-[10px]"></i> Tauriyah (Makna Ganda Tersirat)</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-500 text-[10px]"></i> Jinas, Saja', & Tarsyi' (Fonetik)</div>
+                        </div>
+                    </div>
+                    <button class="mt-6 w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded-xl transition shadow-md">
+                        Mulai Pelajari Al-Badi'
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: ILMU AL-BAYAN -->
+        <section id="view-bayan" class="space-y-6 hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-emerald-900 text-white p-6 rounded-3xl shadow-lg">
+                <div>
+                    <span class="text-xs text-emerald-300 font-bold uppercase tracking-wider">Cabang 1</span>
+                    <h2 class="text-2xl font-extrabold">Ilmu Al-Bayan (علم البيان)</h2>
+                    <p class="text-xs text-emerald-100 mt-1">Seni Penyerupaan, Kiasan Majazi, dan Ungkapan Kinayah</p>
+                </div>
+                <!-- Category Sub-tabs -->
+                <div class="flex flex-wrap gap-2" id="bayan-subtabs">
+                    <button onclick="renderBayanCategory('tasybih', event)" class="bayan-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-amber-400 text-emerald-950 shadow-md">Tasybih (Penyerupaan)</button>
+                    <button onclick="renderBayanCategory('majaz', event)" class="bayan-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-emerald-800 text-emerald-100 hover:bg-emerald-700">Majaz & Isti'arah</button>
+                    <button onclick="renderBayanCategory('kinayah', event)" class="bayan-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-emerald-800 text-emerald-100 hover:bg-emerald-700">Kinayah</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Topics Container -->
+            <div id="bayan-content" class="space-y-6">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- VIEW 3: ILMU AL-MA'ANI -->
+        <section id="view-maani" class="space-y-6 hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-teal-900 text-white p-6 rounded-3xl shadow-lg">
+                <div>
+                    <span class="text-xs text-teal-300 font-bold uppercase tracking-wider">Cabang 2</span>
+                    <h2 class="text-2xl font-extrabold">Ilmu Al-Ma'ani (علم المعاني)</h2>
+                    <p class="text-xs text-teal-100 mt-1">Struktur Kalimat, Pembatasan Qashr, & Efisiensi Bahasa</p>
+                </div>
+                <div class="flex flex-wrap gap-2" id="maani-subtabs">
+                    <button onclick="renderMaaniCategory('khabari', event)" class="maani-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-amber-400 text-teal-950 shadow-md">Khabari & Insya'i</button>
+                    <button onclick="renderMaaniCategory('qashr', event)" class="maani-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-teal-800 text-teal-100 hover:bg-teal-700">Al-Qashr</button>
+                    <button onclick="renderMaaniCategory('ijaz', event)" class="maani-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-teal-800 text-teal-100 hover:bg-teal-700">Ijaz, Ithnab, Musawah</button>
+                    <button onclick="renderMaaniCategory('fashl', event)" class="maani-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-teal-800 text-teal-100 hover:bg-teal-700">Fashl & Washl</button>
+                </div>
+            </div>
+
+            <div id="maani-content" class="space-y-6">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- VIEW 4: ILMU AL-BADI' -->
+        <section id="view-badi" class="space-y-6 hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 text-white p-6 rounded-3xl shadow-lg border border-amber-500/30">
+                <div>
+                    <span class="text-xs text-amber-400 font-bold uppercase tracking-wider">Cabang 3</span>
+                    <h2 class="text-2xl font-extrabold">Ilmu Al-Badi' (علم البديع)</h2>
+                    <p class="text-xs text-amber-100 mt-1">Estetika Keindahan Makna & Harmonitas Fonetik Sastra</p>
+                </div>
+                <div class="flex flex-wrap gap-2" id="badi-subtabs">
+                    <button onclick="renderBadiCategory('manawiyyah', event)" class="badi-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-amber-400 text-slate-950 shadow-md">Keindahan Makna (معنوية)</button>
+                    <button onclick="renderBadiCategory('lafzhiyyah', event)" class="badi-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-slate-800 text-amber-200 hover:bg-slate-700">Keindahan Lafaz (لفظية)</button>
+                </div>
+            </div>
+
+            <div id="badi-content" class="space-y-6">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- VIEW 5: VERSE EXPLORER / SEARCH -->
+        <section id="view-explorer" class="space-y-6 hidden">
+            <div class="glass-card p-6 rounded-3xl shadow-md border border-slate-200 dark:border-slate-800">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-white">Pencari Ayat Al-Qur'an & Syi'ir Balaghah</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Cari berdasarkan kaidah balaghah, kata kunci Arab, atau transliterasi.</p>
+                    </div>
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-search absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="text" id="explorer-search" oninput="filterExplorer()" placeholder="Cari misal: Tasybih, Majaz, النور..." class="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <!-- Explorer Filter Pills -->
+                <div class="flex flex-wrap gap-2 mb-6" id="explorer-pills">
+                    <button onclick="filterExplorerCategory('all')" class="exp-pill px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white">Semua Contoh</button>
+                    <button onclick="filterExplorerCategory('Bayan')" class="exp-pill px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Al-Bayan</button>
+                    <button onclick="filterExplorerCategory('Ma\'ani')" class="exp-pill px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Al-Ma'ani</button>
+                    <button onclick="filterExplorerCategory('Badi\'')" class="exp-pill px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Al-Badi'</button>
+                </div>
+
+                <!-- Grid Verses -->
+                <div id="explorer-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 6: QUIZ MODE -->
+        <section id="view-quiz" class="space-y-6 hidden">
+            <div class="max-w-2xl mx-auto glass-card p-6 md:p-8 rounded-3xl shadow-xl border border-emerald-500/20 relative">
+                
+                <!-- Quiz Mode Selector Header -->
+                <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-white">Kuis Interaktif Balaghah</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Uji pemahaman kaidah sastra dan analisis ayat.</p>
+                    </div>
+                    <div class="flex gap-1.5">
+                        <button onclick="setQuizMode('mc')" id="quiz-btn-mc" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 text-white">Teori</button>
+                        <button onclick="setQuizMode('verse')" id="quiz-btn-verse" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Analisis</button>
+                        <button onclick="setQuizMode('audio')" id="quiz-btn-audio" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Audio</button>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mb-6">
+                    <div class="flex justify-between text-xs text-slate-500 mb-2 font-medium">
+                        <span>Soal <span id="quiz-step">1</span> dari <span id="quiz-total">5</span></span>
+                        <span id="quiz-score-badge" class="font-bold text-emerald-600 dark:text-emerald-400">Skor Kuis: 0</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="quiz-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div id="quiz-box" class="text-center">
+                    <span id="quiz-type-badge" class="inline-block px-3 py-1 bg-amber-400/20 text-amber-700 dark:text-amber-300 border border-amber-400/30 text-xs font-bold rounded-full mb-3">
+                        Kuis Teori
+                    </span>
+                    
+                    <!-- Audio Player Trigger (For Audio Mode) -->
+                    <div id="quiz-audio-trigger" class="hidden mb-4">
+                        <button onclick="playCurrentQuizAudio()" class="mx-auto px-6 py-3 bg-amber-400 hover:bg-amber-300 text-emerald-950 rounded-2xl font-bold text-xs shadow-md flex items-center gap-3 animate-bounce">
+                            <i class="fa-solid fa-volume-high text-base"></i> Putar Audio Pengucapan Arab
+                        </button>
+                    </div>
+
+                    <h3 id="quiz-question-text" class="text-base md:text-lg font-bold text-slate-800 dark:text-white mb-6 leading-relaxed">
+                        -- Soal Kuis --
+                    </h3>
+
+                    <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6">
+                        <!-- Options generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Result Box -->
+                <div id="quiz-result" class="hidden py-8 space-y-4 text-center">
+                    <div class="w-20 h-20 bg-amber-100 dark:bg-amber-900/40 text-amber-500 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner border border-amber-400/30">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white">Kuis Selesai!</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">Skor yang Anda Peroleh dalam sesi ini:</p>
+                    <p id="final-score" class="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">0</p>
+                    <button onclick="restartQuiz()" class="mt-4 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-md transition">
+                        Ulangi Kuis Lagi
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Structural Analysis / Tahlil Balaghi -->
+    <div id="tahlil-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-opacity duration-300">
+        <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 md:p-7 shadow-2xl relative border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto transform transition-transform duration-300 scale-100">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-9 h-9 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 transition">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+            <div id="modal-content" class="space-y-5">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script Engine -->
+    <script>
+        // Audio Engine Implementation
+        let audioCtx = null;
+        let isAudioEngineInit = false;
+
+        function initAudioEngineOnUserAction() {
+            if (!isAudioEngineInit) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                    if (audioCtx.state === 'suspended') {
+                        audioCtx.resume();
+                    }
+                }
+                isAudioEngineInit = true;
+            }
+        }
+
+        function playFX(type) {
+            initAudioEngineOnUserAction();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(783.99, now + 0.12);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.setValueAtTime(110, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, now);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+        }
+
+        function playArabicSpeech(text, fallbackFreq = 400) {
+            initAudioEngineOnUserAction();
+            showAudioVisualizer(true);
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.8;
+                utterance.pitch = 1.0;
+
+                utterance.onend = () => showAudioVisualizer(false);
+                utterance.onerror = () => {
+                    playFallbackVoiceTone(fallbackFreq);
+                    showAudioVisualizer(false);
+                };
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                playFallbackVoiceTone(fallbackFreq);
+                setTimeout(() => showAudioVisualizer(false), 800);
+            }
+        }
+
+        function playFallbackVoiceTone(freq) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.7);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.7);
+        }
+
+        function showAudioVisualizer(show) {
+            const viz = document.getElementById('audio-visualizer');
+            if (show) viz.classList.remove('hidden');
+            else viz.classList.add('hidden');
+        }
+
+        function toggleDarkMode() {
+            playFX('click');
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                themeIcon.className = "fa-solid fa-moon text-sm";
+                localStorage.setItem('balaghah_theme', 'light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                themeIcon.className = "fa-solid fa-sun text-sm";
+                localStorage.setItem('balaghah_theme', 'dark');
+            }
+        }
+
+        // Complete Balaghah Educational Data Store
+        const balaghahData = {
+            bayan: {
+                tasybih: {
+                    title: "Al-Tasybih (التشبيه - Penyerupaan)",
+                    desc: "Menjelaskan bahwa suatu perkara (Mushabbah) memiliki kesamaan sifat dengan perkara lain (Mushabbah Bih) dalam satu atau beberapa aspek keindahan.",
+                    types: [
+                        {
+                            name: "Tasybih Mursal (التشبيه المرسل)",
+                            rule: "Penyerupaan yang MENCANTUMKAN Adat Tasybih (Kata pembanding seperti كـ / كأن).",
+                            exampleAr: "الْعِلْمُ كَالنُّورِ فِي الْهِدَايَةِ",
+                            trans: "Al-'Ilmu kan-nuri fil-hidayah",
+                            meaning: "Ilmu itu seperti cahaya dalam hal memberikan petunjuk.",
+                            breakdown: [
+                                { part: "Mushabbah (Yang Diserupakan)", text: "الْعِلْمُ (Ilmu)" },
+                                { part: "Adat Tasybih (Alat Pembanding)", text: "كـَ (Seperti)" },
+                                { part: "Mushabbah Bih (Pembanding)", text: "النُّورِ (Cahaya)" },
+                                { part: "Wajah Syabah (Kesamaan Sifat)", text: "فِي الْهِدَايَةِ (Memberi Petunjuk)" }
+                            ]
+                        },
+                        {
+                            name: "Tasybih Mu'akkad (التشبيه المؤكد)",
+                            rule: "Penyerupaan yang MEMBUANG Adat Tasybih untuk memperkuat penegasan.",
+                            exampleAr: "أَنْتَ نَجْمٌ فِي الرِّفْعَةِ وَالضِّيَاءِ",
+                            trans: "Anta najmun fir-rif'ati wad-dhiya'",
+                            meaning: "Engkau adalah bintang dalam hal keluhuran dan kemilau.",
+                            breakdown: [
+                                { part: "Mushabbah", text: "أَنْتَ (Engkau)" },
+                                { part: "Adat Tasybih", text: "Dibuang (Tanpa كـ / كأن)" },
+                                { part: "Mushabbah Bih", text: "نَجْمٌ (Bintang)" },
+                                { part: "Wajah Syabah", text: "فِي الرِّفْعَةِ وَالضِّيَاءِ (Keluhuran & Kemilau)" }
+                            ]
+                        },
+                        {
+                            name: "Tasybih Mujmal (التشبيه المجمل)",
+                            rule: "Penyerupaan yang MEMBUANG Wajah Syabah (Aspek kesamaan sifat).",
+                            exampleAr: "الْجَوَادُ فِي السُّرْعَةِ كَالْبَرْقِ",
+                            trans: "Al-Jawadu fis-sur'ati kal-barq",
+                            meaning: "Kuda pacar itu dalam kecepatannya bagaikan kilat.",
+                            breakdown: [
+                                { part: "Mushabbah", text: "الْجَوَادُ (Kuda pacar)" },
+                                { part: "Adat Tasybih", text: "كـَ (Bagaikan)" },
+                                { part: "Mushabbah Bih", text: "الْبَرْقِ (Kilat)" },
+                                { part: "Wajah Syabah", text: "Dibuang (Tersirat)" }
+                            ]
+                        },
+                        {
+                            name: "Tasybih Baligh (التشبيه البليغ)",
+                            rule: "Bentuk Tasybih puncak keindahan yang MEMBUANG Adat Tasybih DAN Wajah Syabah sekaligus.",
+                            exampleAr: "الْعِلْمُ نُورٌ",
+                            trans: "Al-'Ilmu nurun",
+                            meaning: "Ilmu adalah cahaya.",
+                            breakdown: [
+                                { part: "Mushabbah", text: "الْعِلْمُ (Ilmu)" },
+                                { part: "Adat Tasybih", text: "Dibuang" },
+                                { part: "Mushabbah Bih", text: "نُورٌ (Cahaya)" },
+                                { part: "Wajah Syabah", text: "Dibuang" }
+                            ]
+                        }
+                    ]
+                },
+                majaz: {
+                    title: "Al-Majaz wal-Isti'arah (المجاز والاستعارة)",
+                    desc: "Penggunaan kata di luar makna hakikinya karena adanya keterkaitan ('Alaqah) serta petunjuk (Qarinah) yang mencegah makna asli.",
+                    types: [
+                        {
+                            name: "Majaz Mursal (المجاز المرسل)",
+                            rule: "Kiasan kata yang hubungan ('Alaqah) maknanya bukan penyerupaan (bukan Tasybih), seperti menyebut sebagian untuk arti keseluruhan.",
+                            exampleAr: "فَتَحْرِيرُ رَقَبَةٍ مُؤْمِنَةٍ",
+                            trans: "Fa tahriru raqabatim mu'minah",
+                            meaning: "Maka hendaklah memerdekakan seorang hamba sahaya (Lafaz: Leher/رقبة).",
+                            breakdown: [
+                                { part: "Lafaz Majazi", text: "رَقَبَةٍ (Leher)" },
+                                { part: "Makna Hakiki Dimaksud", text: "Seluruh tubuh hamba sahaya" },
+                                { part: "'Alaqah (Hubungan)", text: "Juz'iyyah (Menyebut bagian untuk keseluruhan)" }
+                            ]
+                        },
+                        {
+                            name: "Isti'arah Tashrihiyyah (الاستعارة التصريحية)",
+                            rule: "Kiasan penyerupaan yang menegaskan dan menyebutkan Mushabbah Bih secara jelas.",
+                            exampleAr: "كِتَابٌ أَنزَلْنَاهُ إِلَيْكَ لِتُخْرِجَ النَّاسَ مِنَ الظُّلُمَاتِ إِلَى النُّورِ",
+                            trans: "Kitabun anzalnahu ilaika litukhrijan-nasa minazh-zhulumati ilan-nur",
+                            meaning: "Kitab yang Kami turunkan agar engkau mengeluarkan manusia dari kegelapan (Kesesatan) menuju cahaya (Petunjuk).",
+                            breakdown: [
+                                { part: "Lafaz Isti'arah 1", text: "الظُّلُمَاتِ (Kegelapan = Kesesatan)" },
+                                { part: "Lafaz Isti'arah 2", text: "النُّورِ (Cahaya = Petunjuk Kebenaran)" },
+                                { part: "'Alaqah", text: "Musyabahah (Penyerupaan kebenaran dengan cahaya)" }
+                            ]
+                        }
+                    ]
+                },
+                kinayah: {
+                    title: "Al-Kinayah (الكناية - Ungkapan Tersirat)",
+                    desc: "Penyampaian ungkapan kalimat yang dapat dipahami makna aslinya, namun yang dimaksudkan adalah makna tersirat di baliknya.",
+                    types: [
+                        {
+                            name: "Kinayah 'an Shifah (كناية عن صفة)",
+                            rule: "Ungkapan tersirat untuk menunjukkan suatu sifat (seperti kedermawaan atau keberanian).",
+                            exampleAr: "فُلاَنٌ كَثِيرُ الرَّمَادِ",
+                            trans: "Fulanun katsirur-ramad",
+                            meaning: "Fulan itu banyak abu dapur rumahnya (Makna tersirat: Sangat dermawan suka memasak untuk tamu).",
+                            breakdown: [
+                                { part: "Ungkapan Harfiah", text: "Banyak abu sisa pembakaran kayu dapur" },
+                                { part: "Makna Tersirat (Kinayah)", text: "Dermawan & Suka Melayani Tamu" }
+                            ]
+                        }
+                    ]
+                }
+            },
+            maani: {
+                khabari: {
+                    title: "Al-Kalam Al-Khabari wal-Insya'i (الكلم الخبري والإنشائي)",
+                    desc: "Pembagian tipe kalimat antara berita yang bernilai benar/dusta (Khabari) atau kalimat korelatif/perintah/larangan (Insya'i).",
+                    types: [
+                        {
+                            name: "Al-Kalam Al-Khabari (الكلام الخبري)",
+                            rule: "Kalimat berita informatif yang mengandung probabilitas kebenaran atau kedustaan.",
+                            exampleAr: "الْعِلْمُ نَافِعٌ لِصَاحِبِهِ",
+                            trans: "Al-'Ilmu nafi'un lishahibihi",
+                            meaning: "Ilmu itu bermanfaat bagi pemiliknya.",
+                            breakdown: [
+                                { part: "Tipe Kalimat", text: "Khabari Ibtida'i (Informasi langsung tanpa alat penegas)" }
+                            ]
+                        },
+                        {
+                            name: "Al-Kalam Al-Insya'i (الكلام الإنشائي)",
+                            rule: "Kalimat yang tidak dapat dinilai benar/dusta secara langsung, seperti Perintah (Amr) atau Larangan (Nahy).",
+                            exampleAr: "يَا أَيُّهَا الَّذِينَ آمَنُوا اصْبِرُوا",
+                            trans: "Ya ayyuhalladzina amanus-biru",
+                            meaning: "Wahai orang-orang yang beriman, bersabarlah kalian! (Perintah / Amr).",
+                            breakdown: [
+                                { part: "Tipe Insya'i", text: "Amr (الأمر - Perintah)" },
+                                { part: "Bentuk Lafaz", text: "اصْبِرُوا (Fi'il Amr)" }
+                            ]
+                        }
+                    ]
+                },
+                qashr: {
+                    title: "Al-Qashr (القصر)",
+                    desc: "Membatasi suatu perkara hanya pada perkara lain dengan metode khusus seperti *Innama*, *Nafi & Istitsna'*, atau mendahulukan komponen kalimat.",
+                    types: [
+                        {
+                            name: "Qashr bi 'Innama' (بِإِنَّمَا)",
+                            rule: "Pengkhususan makna menggunakan kata 'إِنَّمَا' (Hanyasanya).",
+                            exampleAr: "إِنَّمَا يَخْشَى اللَّهَ مِنْ عِبَادِهِ الْعُلَمَاءُ",
+                            trans: "Innama yakhsyallaha min 'ibadihil-'ulama'",
+                            meaning: "Hanyasanya yang takut kepada Allah di antara hamba-hamba-Nya ialah para ulama.",
+                            breakdown: [
+                                { part: "Alat Qashr", text: "إِنَّمَا (Innama)" },
+                                { part: "Maqshur (Objek Dibatasi)", text: "Khasyyah / Rasa Takut" },
+                                { part: "Maqshur 'Alaih", text: "Al-Ulama' (Para Ulama)" }
+                            ]
+                        },
+                        {
+                            name: "Qashr bi An-Nafi wal-Istitsna' (النفي والاستثناء)",
+                            rule: "Pembatasan makna dengan meniadakan lalu mengecualikan.",
+                            exampleAr: "وَمَا مُحَمَّدٌ إِلَّا رَسُولٌ",
+                            trans: "Wa ma Muhammadun illa rasul",
+                            meaning: "Dan tidaklah Muhammad itu melainkan seorang Rasul.",
+                            breakdown: [
+                                { part: "Nafi", text: "مَا (Tidaklah)" },
+                                { part: "Istitsna'", text: "إِلَّا (Melainkan)" }
+                            ]
+                        }
+                    ]
+                },
+                ijaz: {
+                    title: "Al-Ijaz, Al-Ithnab, wal-Musawah (الإيجاز والإطناب والمساواة)",
+                    desc: "Seni mengukur panjang-pendeknya kalimat sesuai kebutuhan situasi.",
+                    types: [
+                        {
+                            name: "Al-Ijaz (الإيجاز)",
+                            rule: "Merangkum makna yang sangat luas ke dalam lafaz ringkas tanpa mengurangi kejelasan.",
+                            exampleAr: "وَلَكُمْ فِي الْقِصَاصِ حَيَاةٌ",
+                            trans: "Wa lakum fil-qishasi hayatun",
+                            meaning: "Dan dalam hukum qishash itu ada (jaminan) kelangsungan hidup bagimu.",
+                            breakdown: [
+                                { part: "Kelebihan Balaghah", text: "Ringkas tetapi mencegah pembunuhan berantai dalam masyarakat" }
+                            ]
+                        },
+                        {
+                            name: "Al-Ithnab (الإطناب)",
+                            rule: "Memperpanjang kalimat dengan menambah rincian demi tujuan penegasan (Taukid) atau penghormatan.",
+                            exampleAr: "تَنَزَّلُ الْمَلَائِكَةُ وَالرُّوحُ فِيهَا",
+                            trans: "Tanazzalul-mala'ikatu war-ruhu fiha",
+                            meaning: "Malaikat-malaikat dan Malaikat Jibril (Ar-Ruh) turun pada malam itu.",
+                            breakdown: [
+                                { part: "Catatan Balaghah", text: "Menyebut Jibril secara khusus setelah menyebut seluruh Malaikat demi memuliakannya" }
+                            ]
+                        }
+                    ]
+                },
+                fashl: {
+                    title: "Al-Fashl wal-Washl (الفصل والوصل)",
+                    desc: "Aturan menyambungkan dua kalimat dengan Wawu Athaf (*Washl*) atau memisahkannya tanpa Wawu (*Fashl*).",
+                    types: [
+                        {
+                            name: "Al-Fashl (الفصل)",
+                            rule: "Memisahkan dua kalimat tanpa kata hubung Wawu karena adanya kesatuan makna yang sempurna (*Kamalul-Ittishal*).",
+                            exampleAr: "اللَّهُ يَسْتَهْزِئُ بِهِمْ",
+                            trans: "Allahu yastahzi'u bihim",
+                            meaning: "Allah akan (membalas) olok-olokan mereka (Dipisah dari kalimat sebelumnya tanpa Wawu).",
+                            breakdown: [{ part: "Sebab Fashl", text: "Kalimat kedua berfungsi sebagai jawaban tajam atas pertanyaan tersirat" }]
+                        }
+                    ]
+                }
+            },
+            badi: {
+                manawiyyah: {
+                    title: "Muhassinat Ma'nawiyyah (محسنات معنوية)",
+                    desc: "Keindahan sastra yang terfokus pada keunikan makna dan hubungan konsep pikiran.",
+                    types: [
+                        {
+                            name: "At-Thibaq (الطباق)",
+                            rule: "Penggabungan dua kata yang berlawanan arti dalam satu kalimat.",
+                            exampleAr: "وَتَحْسَبُهُمْ أَيْقَاظًا وَهُمْ رُقُودٌ",
+                            trans: "Wa tahsabuhum ayqathan wa hum ruqud",
+                            meaning: "Dan engkau mengira mereka itu bangun, padahal mereka tidur.",
+                            breakdown: [
+                                { part: "Kata Berlawanan 1", text: "أَيْقَاظًا (Bangun / Jaga)" },
+                                { part: "Kata Berlawanan 2", text: "رُقُودٌ (Tidur)" }
+                            ]
+                        },
+                        {
+                            name: "Al-Muqabalah (المقابلة)",
+                            rule: "Menghadirkan dua makna/kata atau lebih, lalu menghadirkan padanan oposisinya secara berurutan.",
+                            exampleAr: "فَلْيَضْحَكُوا قَلِيلًا وَلْيَبْكُوا كَثِيرًا",
+                            trans: "Falyadh-haku qalilan walyabku katsira",
+                            meaning: "Maka hendaklah mereka tertawa sedikit dan menangis banyak.",
+                            breakdown: [
+                                { part: "Pasangan 1", text: "Tertawa <-> Menangis (يَضْحَكُوا <-> يَبْكُوا)" },
+                                { part: "Pasangan 2", text: "Sedikit <-> Banyak (قَلِيلًا <-> كَثِيرًا)" }
+                            ]
+                        },
+                        {
+                            name: "At-Tauriyah (التورية)",
+                            rule: "Menyebutkan kata yang memiliki dua makna: Makna Dekat (langsung terlintas tapi bukan maksud) dan Makna Jauh (tersirat dan menjadi maksud utama).",
+                            exampleAr: "والرَّحْمَنُ عَلَى العَرْشِ اسْتَوَى",
+                            trans: "Ar-Rahmanu 'alal-'arsyis-tawa",
+                            meaning: "(Allah) Yang Maha Pengasih bersemayam di atas 'Arsy.",
+                            breakdown: [{ part: "Keindahan Balaghah", text: "Mengandung makna keagungan tanpa menyerupakan Allah dengan makhluk" }]
+                        }
+                    ]
+                },
+                lafzhiyyah: {
+                    title: "Muhassinat Lafzhiyyah (محسنات لفظية)",
+                    desc: "Estetika sastra yang memberikan kenikmatan pendengaran melalui ritme fonetik dan rima ucapan.",
+                    types: [
+                        {
+                            name: "Al-Jinas (الجناس)",
+                            rule: "Dua kata yang serupa pengucapan bunyinya tetapi berbeda maknanya (Homonim Sastra).",
+                            exampleAr: "وَيَوْمَ تَقُومُ السَّاعَةُ يُقْسِمُ الْمُجْرِمُونَ مَا لَبِثُوا غَيْرَ سَاعَةٍ",
+                            trans: "Wa yauma taqumus-sa'atu yuqsimul-mujrimuna ma labitsu ghaira sa'ah",
+                            meaning: "Dan pada hari terjadinya Kiamat (السَّاعَةُ), orang-orang berdosa bersumpah tidak diam melainkan sebentar saja (سَاعَةٍ - sesaat).",
+                            breakdown: [
+                                { part: "Kata 1", text: "السَّاعَةُ (Hari Kiamat)" },
+                                { part: "Kata 2", text: "سَاعَةٍ (Kurun waktu / Sesaat)" },
+                                { part: "Tipe Jinas", text: "Jinas Tam (Serupa sempurna dalam jenis huruf, harakat, jumlah, dan urutan)" }
+                            ]
+                        },
+                        {
+                            name: "As-Saja' (السجع)",
+                            rule: "Kesesuaian huruf akhir (Rima) pada beberapa klausa kalimat prosa.",
+                            exampleAr: "فَأَمَّا الْيَتِيمَ فَلَا تَقْهَرْ ، وَأَمَّا السَّائِلَ فَلَا تَنْهَرْ",
+                            trans: "Fa ammal-yatima fala taqhar, wa ammas-sa'ila fala tanhar",
+                            meaning: "Sebab itu terhadap anak yatim janganlah engkau berlaku sewenang-wenang (تَقْهَرْ). Dan terhadap orang yang meminta-minta janganlah engkau menghardiknya (تَنْهَرْ).",
+                            breakdown: [
+                                { part: "Rima Akhir", text: "Huruf Ro' berharakat Sukun (ـهَرْ)" }
+                            ]
+                        }
+                    ]
+                }
+            }
+        };
+
+        // All Verse Examples for Explorer & Search
+        const allVerses = [
+            { id: 1, ar: "الْعِلْمُ كَالنُّورِ فِي الْهِدَايَةِ", trans: "Al-'Ilmu kan-nuri fil-hidayah", meaning: "Ilmu itu seperti cahaya dalam hal memberi petunjuk.", cat: "Bayan", sub: "Tasybih Mursal" },
+            { id: 2, ar: "فَتَحْرِيرُ رَقَبَةٍ مُؤْمِنَةٍ", trans: "Fa tahriru raqabatim mu'minah", meaning: "Maka memerdekakan seorang hamba sahaya.", cat: "Bayan", sub: "Majaz Mursal" },
+            { id: 3, ar: "إِنَّمَا يَخْشَى اللَّهَ مِنْ عِبَادِهِ الْعُلَمَاءُ", trans: "Innama yakhsyallaha min 'ibadihil-'ulama'", meaning: "Hanyasanya yang takut kepada Allah ialah para ulama.", cat: "Ma'ani", sub: "Al-Qashr" },
+            { id: 4, ar: "وَتَحْسَبُهُمْ أَيْقَاظًا وَهُمْ رُقُودٌ", trans: "Wa tahsabuhum ayqathan wa hum ruqud", meaning: "Dan engkau mengira mereka itu bangun, padahal mereka tidur.", cat: "Badi'", sub: "At-Thibaq" },
+            { id: 5, ar: "فَلْيَضْحَكُوا قَلِيلًا وَلْيَبْكُوا كَثِيرًا", trans: "Falyadh-haku qalilan walyabku katsira", meaning: "Maka hendaklah mereka tertawa sedikit dan menangis banyak.", cat: "Badi'", sub: "Al-Muqabalah" },
+            { id: 6, ar: "وَيَوْمَ تَقُومُ السَّاعَةُ يُقْسِمُ الْمُجْرِمُونَ مَا لَبِثُوا غَيْرَ سَاعَةٍ", trans: "Wa yauma taqumus-sa'atu yuqsimul-mujrimuna ma labitsu ghaira sa'ah", meaning: "Pada hari Kiamat, orang berdosa bersumpah hanya diam sesaat.", cat: "Badi'", sub: "Al-Jinas" }
+        ];
+
+        // Dynamic store mapping for Tahlil Modal
+        let activeItemsStore = {};
+
+        // Render Navigation Views
+        function switchView(viewName) {
+            playFX('click');
+            const views = ['overview', 'bayan', 'maani', 'badi', 'explorer', 'quiz'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById(`tab-${v}`);
+                if (btn) {
+                    btn.className = "nav-tab px-4 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-emerald-100 hover:text-white hover:bg-emerald-800/50 dark:hover:bg-slate-800 whitespace-nowrap transition";
+                }
+            });
+
+            const activeSection = document.getElementById(`view-${viewName}`);
+            if (activeSection) activeSection.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`tab-${viewName}`);
+            if (activeBtn) {
+                activeBtn.className = "nav-tab px-4 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 text-amber-300 bg-emerald-800 dark:bg-slate-800 shadow-sm whitespace-nowrap transition";
+            }
+
+            if (viewName === 'bayan') renderBayanCategory('tasybih');
+            if (viewName === 'maani') renderMaaniCategory('khabari');
+            if (viewName === 'badi') renderBadiCategory('manawiyyah');
+            if (viewName === 'explorer') renderExplorerGrid(allVerses);
+        }
+
+        // Subcategory Renderers
+        function renderBayanCategory(catKey, evt) {
+            playFX('click');
+            const data = balaghahData.bayan[catKey];
+            const container = document.getElementById('bayan-content');
+            
+            document.querySelectorAll('#bayan-subtabs button').forEach(b => {
+                b.className = "bayan-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-emerald-800 text-emerald-100 hover:bg-emerald-700 transition";
+            });
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.className = "bayan-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-amber-400 text-emerald-950 shadow-md transition";
+            }
+
+            container.innerHTML = generateSectionHTML(data, 'bayan', catKey);
+        }
+
+        function renderMaaniCategory(catKey, evt) {
+            playFX('click');
+            const data = balaghahData.maani[catKey];
+            const container = document.getElementById('maani-content');
+            
+            document.querySelectorAll('#maani-subtabs button').forEach(b => {
+                b.className = "maani-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-teal-800 text-teal-100 hover:bg-teal-700 transition";
+            });
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.className = "maani-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-amber-400 text-teal-950 shadow-md transition";
+            }
+
+            container.innerHTML = generateSectionHTML(data, 'maani', catKey);
+        }
+
+        function renderBadiCategory(catKey, evt) {
+            playFX('click');
+            const data = balaghahData.badi[catKey];
+            const container = document.getElementById('badi-content');
+            
+            document.querySelectorAll('#badi-subtabs button').forEach(b => {
+                b.className = "badi-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-slate-800 text-amber-200 hover:bg-slate-700 transition";
+            });
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.className = "badi-sub-btn px-4 py-2 text-xs font-bold rounded-xl bg-amber-400 text-slate-950 shadow-md transition";
+            }
+
+            container.innerHTML = generateSectionHTML(data, 'badi', catKey);
+        }
+
+        function generateSectionHTML(data, branch, catKey) {
+            if (!data) return '<p class="text-xs text-slate-500">Materi sedang dimuat...</p>';
+            activeItemsStore[`${branch}_${catKey}`] = data.types;
+
+            let cardsHTML = data.types.map((typeItem, idx) => `
+                <div class="glass-card p-5 md:p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm hover:shadow-md transition">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                        <h4 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-center justify-center font-extrabold border border-emerald-500/30">${idx + 1}</span>
+                            ${typeItem.name}
+                        </h4>
+                        <span class="px-3 py-1 bg-amber-400/10 text-amber-600 dark:text-amber-400 border border-amber-400/20 text-[11px] font-bold rounded-lg">Kaidah Balaghah</span>
+                    </div>
+
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900/50 p-3.5 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+                        <strong class="text-emerald-600 dark:text-emerald-400">Prinsip Kaidah:</strong> ${typeItem.rule}
+                    </p>
+
+                    <!-- Arabic Verse Example Box -->
+                    <div class="bg-emerald-50/50 dark:bg-slate-900/90 p-4 md:p-5 rounded-2xl border border-emerald-200/60 dark:border-slate-800 text-right space-y-2 relative">
+                        <button onclick="playArabicSpeech('${typeItem.exampleAr.replace(/'/g, "\\'")}')" title="Dengarkan Pelafalan" class="absolute left-4 top-4 w-9 h-9 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl flex items-center justify-center transition shadow-md">
+                            <i class="fa-solid fa-volume-high text-xs"></i>
+                        </button>
+                        <p class="font-arabic text-2xl md:text-3xl font-bold text-emerald-950 dark:text-emerald-300 leading-loose">${typeItem.exampleAr}</p>
+                        <p class="text-left text-xs font-semibold text-emerald-700 dark:text-emerald-400">${typeItem.trans}</p>
+                        <p class="text-left text-xs text-slate-600 dark:text-slate-400">"${typeItem.meaning}"</p>
+                    </div>
+
+                    <!-- Action: Tahlil Balaghi Modal Trigger -->
+                    <button onclick="openTahlilModalByIndex('${branch}_${catKey}', ${idx})" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-microscope text-amber-300"></i> Analisis Komponen (Tahlil Balaghi)
+                    </button>
+                </div>
+            `).join('');
+
+            return `
+                <div class="glass-card p-6 rounded-3xl mb-6 border border-slate-200 dark:border-slate-800">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-1">${data.title}</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">${data.desc}</p>
+                </div>
+                <div class="space-y-4">${cardsHTML}</div>
+            `;
+        }
+
+        // Tahlil Balaghi Modal Trigger
+        function openTahlilModalByIndex(storeKey, idx) {
+            playFX('click');
+            const items = activeItemsStore[storeKey];
+            if (!items || !items[idx]) return;
+
+            const item = items[idx];
+            const modal = document.getElementById('tahlil-modal');
+            const content = document.getElementById('modal-content');
+
+            let breakdownRows = item.breakdown.map((b, i) => `
+                <div class="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl text-xs border border-slate-200/80 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-1 shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold flex items-center justify-center">${i+1}</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400">${b.part}</span>
+                    </div>
+                    <span class="font-semibold text-slate-800 dark:text-slate-200 md:text-right">${b.text}</span>
+                </div>
+            `).join('');
+
+            content.innerHTML = `
+                <div class="text-center space-y-2">
+                    <span class="px-3.5 py-1 bg-amber-400/20 text-amber-700 dark:text-amber-300 border border-amber-400/30 text-xs font-extrabold rounded-full inline-block">
+                        <i class="fa-solid fa-atom mr-1"></i> Tahlil Balaghi (تحليل بلاغي)
+                    </span>
+                    <h3 class="text-xl font-extrabold text-slate-800 dark:text-white">${item.name}</h3>
+                    
+                    <div class="bg-emerald-50 dark:bg-slate-950 p-4 rounded-2xl border border-emerald-200 dark:border-slate-800 relative">
+                        <p class="font-arabic text-2xl md:text-3xl font-bold text-emerald-900 dark:text-emerald-300 leading-relaxed">${item.exampleAr}</p>
+                        <p class="text-xs text-emerald-700 dark:text-emerald-400 font-medium mt-1">${item.trans}</p>
+                        <button onclick="playArabicSpeech('${item.exampleAr.replace(/'/g, "\\'")}')" class="mt-2 px-3 py-1 bg-emerald-600 text-white text-[11px] font-bold rounded-lg hover:bg-emerald-700 transition inline-flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-volume-high"></i> Putar Suara Ayat
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5 pt-2 border-t border-slate-200 dark:border-slate-800">
+                    <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-emerald-500"></i> Pembedahan Komponen Kaidah:
+                    </h4>
+                    <div class="space-y-2 max-h-[40vh] overflow-y-auto pr-1">
+                        ${breakdownRows}
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed italic bg-slate-100 dark:bg-slate-800/50 p-3 rounded-xl">
+                        <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> <strong>Pelajaran Sastra:</strong> ${item.rule}
+                    </p>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            playFX('click');
+            document.getElementById('tahlil-modal').classList.add('hidden');
+        }
+
+        // Verse Explorer Engine
+        let currentExpCategory = 'all';
+
+        function renderExplorerGrid(verses) {
+            const container = document.getElementById('explorer-grid');
+            container.innerHTML = '';
+
+            verses.forEach(v => {
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 relative";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded-lg border border-emerald-500/20">${v.cat} • ${v.sub}</span>
+                        <button onclick="playArabicSpeech('${v.ar.replace(/'/g, "\\'")}')" class="w-7 h-7 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-xs hover:bg-emerald-700 transition">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                    <p class="font-arabic text-2xl font-bold text-right text-slate-800 dark:text-white py-1">${v.ar}</p>
+                    <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">${v.trans}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">"${v.meaning}"</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterExplorerCategory(cat) {
+            playFX('click');
+            currentExpCategory = cat;
+            document.querySelectorAll('#explorer-pills button').forEach(b => {
+                b.className = "exp-pill px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300";
+            });
+            event.currentTarget.className = "exp-pill px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white";
+            filterExplorer();
+        }
+
+        function filterExplorer() {
+            const query = document.getElementById('explorer-search').value.toLowerCase();
+            let filtered = allVerses.filter(v => {
+                const matchCat = currentExpCategory === 'all' || v.cat === currentExpCategory;
+                const matchQuery = v.ar.includes(query) || v.trans.toLowerCase().includes(query) || v.sub.toLowerCase().includes(query) || v.meaning.toLowerCase().includes(query);
+                return matchCat && matchQuery;
+            });
+            renderExplorerGrid(filtered);
+        }
+
+        // Quiz System
+        let userScore = parseInt(localStorage.getItem('balaghah_score') || '0');
+        let quizMode = 'mc';
+        let quizCurrentIndex = 0;
+        let sessionQuizScore = 0;
+
+        const quizDataSets = {
+            mc: [
+                { q: "Cabang Balaghah yang khusus mempelajari seni variasi penyerupaan dan kiasan adalah...", options: ["Ilmu Al-Ma'ani", "Ilmu Al-Bayan", "Ilmu Al-Badi'", "Ilmu Nahwu"], correct: 1 },
+                { q: "Apabila Adat Tasybih dan Wajah Syabah DIBUANG sekaligus, maka bentuk Tasybih dinamakan...", options: ["Tasybih Mursal", "Tasybih Mujmal", "Tasybih Baligh", "Tasybih Mu'akkad"], correct: 2 },
+                { q: "Penggabungan dua kata yang saling berlawanan arti (seperti Bangun & Tidur) dalam Ilmu Badi' disebut...", options: ["At-Thibaq", "Al-Jinas", "As-Saja'", "Al-Qashr"], correct: 0 },
+                { q: "Penyebutan kata 'رَقَبَةٌ' (leher) untuk mengindikasikan seluruh tubuh hamba sahaya merupakan contoh...", options: ["Isti'arah Makniyyah", "Majaz Mursal", "Kinayah", "Tasybih Mujmal"], correct: 1 },
+                { q: "Kalimat perintah (Amr) dan pertanyaan (Istifham) tergolong ke dalam kalam...", options: ["Khabari Ibtida'i", "Insya'i Thalabi", "Insya'i Ghairu Thalabi", "Al-Qashr"], correct: 1 }
+            ],
+            verse: [
+                { q: "Perhatikan ayat: 'فَلْيَضْحَكُوا قَلِيلًا وَلْيَبْكُوا كَثِيرًا'. Kaidah Balaghah apakah yang terkandung di dalamnya?", options: ["Al-Muqabalah", "Al-Jinas", "Kinayah", "Tasybih Baligh"], correct: 0 },
+                { q: "Perhatikan ayat: 'إِنَّمَا يَخْشَى اللَّهَ مِنْ عِبَادِهِ الْعُلَمَاءُ'. Metode Balaghah apa yang digunakan untuk membatasi makna?", options: ["Al-Ijaz", "Al-Qashr bi Innama", "Al-Fashl", "Isti'arah Tashrihiyyah"], correct: 1 },
+                { q: "Perhatikan ayat: 'وَيَوْمَ تَقُومُ السَّاعَةُ يُقْسِمُ الْمُجْرِمُونَ مَا لَبِثُوا غَيْرَ سَاعَةٍ'. Keindahan fonetik apa yang ada pada kata السَّاعَةُ dan سَاعَةٍ?", options: ["As-Saja'", "Al-Jinas At-Tam", "At-Thibaq", "Tasybih Mujmal"], correct: 1 },
+                { q: "Perhatikan frasa: 'الْعِلْمُ كَالنُّورِ فِي الْهِدَايَةِ'. Disebut apakah kata 'كـَ' (seperti) dalam rukun Tasybih?", options: ["Mushabbah", "Mushabbah Bih", "Adat Tasybih", "Wajah Syabah"], correct: 2 }
+            ],
+            audio: [
+                { audioText: "الْعِلْمُ كَالنُّورِ", q: "Dengarkan audio! Kalimat tersebut merupakan contoh dari...", options: ["Tasybih (Penyerupaan)", "Al-Jinas", "Al-Qashr", "Kinayah"], correct: 0 },
+                { audioText: "وَتَحْسَبُهُمْ أَيْقَاظًا وَهُمْ رُقُودٌ", q: "Dengarkan audio! Apakah keindahan sastra dalam klausa tersebut?", options: ["At-Thibaq (Kata Berlawanan)", "As-Saja'", "Isti'arah Makniyyah", "Al-Fashl"], correct: 0 },
+                { audioText: "فَتَحْرِيرُ رَقَبَةٍ مُؤْمِنَةٍ", q: "Dengarkan audio! Ayat tersebut menggunakan kaidah...", options: ["Majaz Mursal", "Al-Qashr", "Tasybih Baligh", "Al-Muqabalah"], correct: 0 }
+            ]
+        };
+
+        function setQuizMode(mode) {
+            playFX('click');
+            quizMode = mode;
+            ['mc', 'verse', 'audio'].forEach(m => {
+                const b = document.getElementById(`quiz-btn-${m}`);
+                if (b) b.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition";
+            });
+            document.getElementById(`quiz-btn-${mode}`).className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow-sm transition";
+            restartQuiz();
+        }
+
+        function renderQuizStep() {
+            const currentList = quizDataSets[quizMode];
+            if (quizCurrentIndex >= currentList.length) {
+                document.getElementById('quiz-box').classList.add('hidden');
+                document.getElementById('quiz-result').classList.remove('hidden');
+                document.getElementById('final-score').innerText = sessionQuizScore;
+
+                userScore += sessionQuizScore;
+                localStorage.setItem('balaghah_score', userScore.toString());
+                document.getElementById('user-score').innerText = userScore;
+                return;
+            }
+
+            const q = currentList[quizCurrentIndex];
+            document.getElementById('quiz-step').innerText = quizCurrentIndex + 1;
+            document.getElementById('quiz-total').innerText = currentList.length;
+            document.getElementById('quiz-score-badge').innerText = `Skor Kuis: ${sessionQuizScore}`;
+            document.getElementById('quiz-question-text').innerText = q.q;
+
+            const progress = (quizCurrentIndex / currentList.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progress}%`;
+
+            const audioTrigger = document.getElementById('quiz-audio-trigger');
+            if (quizMode === 'audio') {
+                audioTrigger.classList.remove('hidden');
+                document.getElementById('quiz-type-badge').innerText = "Kuis Pendengaran Audio";
+                playCurrentQuizAudio();
+            } else {
+                audioTrigger.classList.add('hidden');
+                document.getElementById('quiz-type-badge').innerText = quizMode === 'mc' ? "Kuis Teori Balaghah" : "Kuis Analisis Ayat";
+            }
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-slate-800 transition font-medium text-xs flex items-center justify-between text-slate-700 dark:text-slate-200";
+                btn.innerHTML = `
+                    <span>${opt}</span>
+                    <i class="fa-regular fa-circle text-slate-300 dark:text-slate-600"></i>
+                `;
+                btn.onclick = () => selectQuizAnswer(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function playCurrentQuizAudio() {
+            const currentList = quizDataSets[quizMode];
+            const q = currentList[quizCurrentIndex];
+            if (q && q.audioText) {
+                playArabicSpeech(q.audioText);
+            }
+        }
+
+        function selectQuizAnswer(selectedIndex, btnElement) {
+            const currentList = quizDataSets[quizMode];
+            const q = currentList[quizCurrentIndex];
+            const allBtns = document.getElementById('quiz-options').children;
+
+            for (let b of allBtns) b.disabled = true;
+
+            if (selectedIndex === q.correct) {
+                playFX('correct');
+                btnElement.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 font-bold text-xs flex items-center justify-between";
+                btnElement.querySelector('i').className = "fa-solid fa-circle-check text-emerald-600";
+                sessionQuizScore += 25;
+            } else {
+                playFX('wrong');
+                btnElement.className = "w-full text-left p-4 rounded-xl border-2 border-red-500 bg-red-100 dark:bg-red-950/60 text-red-900 dark:text-red-200 font-bold text-xs flex items-center justify-between";
+                btnElement.querySelector('i').className = "fa-solid fa-circle-xmark text-red-600";
+
+                const correctBtn = allBtns[q.correct];
+                correctBtn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-slate-800 text-emerald-900 dark:text-emerald-300 font-semibold text-xs flex items-center justify-between";
+            }
+
+            setTimeout(() => {
+                quizCurrentIndex++;
+                renderQuizStep();
+            }, 1200);
+        }
+
+        function restartQuiz() {
+            playFX('click');
+            quizCurrentIndex = 0;
+            sessionQuizScore = 0;
+            document.getElementById('quiz-box').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            renderQuizStep();
+        }
+
+        // Initialize App on Window Load
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('balaghah_theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.remove('light');
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon').className = "fa-solid fa-sun text-sm";
+            }
+
+            document.getElementById('user-score').innerText = userScore;
+            switchView('overview');
+        };
+    </script>
+</body>
+</html>
